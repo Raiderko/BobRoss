@@ -14,11 +14,13 @@ namespace BobRoss
     
     public partial class Form1 : Form
     {
+       
         public Form1()
         {
             InitializeComponent();
             
         }
+        
         List<Layer> layers = new List<Layer>();
         Pen pen;
         Graphics gr;
@@ -265,10 +267,21 @@ namespace BobRoss
         {
             
         }
-
+        public SineConstructor sineC { get; set; }
         private void SineButton_Click(object sender, EventArgs e)
         {
-            Layer newLayer = new Layer(panel1, "Sine");
+            SineConstructor sineCon = new SineConstructor();
+            sineCon.Show(this);
+            sineC = sineCon;
+            sineC.ParentForm = this;
+        }
+
+
+        
+        private void button3_Click(object sender, EventArgs e)
+        {
+            
+            Layer newLayer = new Layer(panel1, "Sine Layer");
             layers.Add(newLayer);
             if (listBox1.Items.Contains(newLayer.Name))
             {
@@ -279,10 +292,10 @@ namespace BobRoss
                 listBox1.Items.Add(newLayer.Name);
             }
             Graphics gr = Graphics.FromImage(newLayer.BmpL);
-            
+
             SinCreate sin = new SinCreate();
-            sin.Initialize(0.0, 50, 10, gr, panel1, pen);
-                pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
+            sin.Initialize(sineC.Angle, sineC.Freq, sineC.Amp, gr, panel1, pen);
+            pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
         }
     }
 }

@@ -18,14 +18,15 @@ namespace BobRoss
 
         public void Initialize(double angle, double freq, double t, Graphics g,Panel pan, Pen p)
         {
-            double delta = 0.1;
+
+            double delta = 0.05 * freq;
             
 
             int Ycen = pan.Height / 2;
             int xP = 0;
             int yP = Ycen + (int)(Math.Sin(angle * freq) * t);  
 
-            for(int x = 0; x < pan.Width; x++)
+            for(int x = 1; x < pan.Width; x++)
             {
                 angle += delta;
                 int y = Ycen +(int)(Math.Sin(angle * freq) * t);
