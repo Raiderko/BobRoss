@@ -150,7 +150,16 @@ namespace BobRoss
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            gr.Clear(Color.White);
+            foreach (Layer l in layers)
+            {
+                int index = layers.IndexOf(l);
+                if (index < 0) return;
+                Layer activeL = layers[index];
+
+                Graphics grep = Graphics.FromImage(activeL.BmpL);
+                grep.Clear(Color.Transparent);
+                pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
+            }
         }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -164,15 +173,16 @@ namespace BobRoss
             if (MouseDown && modeDraw.Checked)
             {
                 int index = listBox1.SelectedIndex;
-                if (index < 0) return;
+                if (index < 0) { MessageBox.Show("Select a Layer", "No layer"); MouseDown = false; return; }
                 Layer activeL = layers[index];
                 
                 Graphics grep = Graphics.FromImage(activeL.BmpL);
                 grep.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 grep.FillEllipse(brush, e.X, e.Y, pen.Width, pen.Width);
                 pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
-
+                
             }
+            
         }
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -197,7 +207,7 @@ namespace BobRoss
             {
                 listBox1.Items.Add(newLayer.Name);
             }
-
+            listBox1.SelectedIndex = layers.IndexOf(newLayer);
             pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
         }
         public Bitmap MergeLayers(int width, int height)
@@ -297,5 +307,43 @@ namespace BobRoss
             sin.Initialize(sineC.Angle, sineC.Freq, sineC.Amp, gr, panel1, pen);
             pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
         }
+
+        private void imageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int index = listBox1.SelectedIndex;
+            if (index < 0) { MessageBox.Show("Select a Layer", "No layer"); MouseDown = false; return; }
+            Layer activeL = layers[index];
+
+            Graphics grep = Graphics.FromImage(activeL.BmpL);
+            grep.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            OpenFileDialog dialog = new OpenFileDialog();
+            
+            dialog.Filter = @"PNG|*.png";
+            DialogResult dialogResult = dialog.ShowDialog();
+            if (dialogResult == DialogResult.OK)
+            {
+                Image img = new Bitmap(dialog.OpenFile());
+                grep.DrawImage(img, 0, 0, pictureBox1.Width, pictureBox1.Height);
+                pictureBox1.Image = MergeLayers(panel1.Width, panel1.Height);
+            }
+           
+           
+        }
+        /** WORK IN PROGRESS :D
+        public void RenameLayer(string newName)
+        {
+            int index = listBox1.SelectedIndex;
+
+            if (index < 0) { MessageBox.Show("Select a Layer", "No layer"); MouseDown = false; return; }
+            Layer activeL = layers[index];
+            if(activeL.Name == "Graph") { MessageBox.Show("Unable to rename this layer", "Action Failed"); MouseDown = false; return; }
+            if (newName == "Graph") { MessageBox.Show("Unable to rename", "Action Failed"); MouseDown = false; return; }
+
+            activeL.Name = newName;
+            updateListB();
+            
+        } 
+        */ 
+        
     }
 }
